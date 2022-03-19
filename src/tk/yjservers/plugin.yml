@@ -1,0 +1,26 @@
+main: tk.yjservers.BungledSigns
+version: 1.1.0
+name: BungledSigns
+description: A simple plugin meant for server lobbies using bungeecord. Create signs that warp users to different servers!
+commands:
+  linksign:
+    description: Link a sign to a linked bungeecord server, connecting players to the server when righted clicked.
+    usage: /linksign (server name), Look at the sign you want to link!
+    permission-message: You dont have the necessary permissions to use this command.
+    permission: bungledsigns.link
+    aliases:
+      - ls
+  unlinksign:
+    description: Unlink a linked sign, thus allowing players to relink it or break it.
+    usage: /unlinksign, Look at the sign you want to unlink!
+    permission-message: You dont have the necessary permissions to use this command.
+    permission: bungledsigns.unlink
+    aliases:
+      - uls
+permissions:
+  bungledsigns.link:
+    default: op
+    description: Permission to link a sign to a bungeecord server. All ops have this permission by default.
+  bungledsigns.unlink:
+    default: op
+    description: Permission to unlink a sign from a bungeecord server. All ops have this permission by default.

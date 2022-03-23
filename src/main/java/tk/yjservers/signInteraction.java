@@ -19,9 +19,11 @@ import static tk.yjservers.BungledSigns.*;
 public class signInteraction implements Listener {
 
     BungledSigns bungledSigns;
+    BungeeMessageAPI bcapi;
 
     public signInteraction() {
         bungledSigns = new BungledSigns();
+        bcapi = new BungeeMessageAPI(Bukkit.getPluginManager().getPlugin("BungledSigns"));
     }
 
     @EventHandler
@@ -36,11 +38,7 @@ public class signInteraction implements Listener {
                     Bukkit.getLogger().info(p.getDisplayName() + " clicked on a linked sign at " + clickedblock.getLocation().toVector().toString() + ", and is being sent to " + server + ".");
                     p.sendMessage(ChatColor.GREEN+ "Sending you to " + server + "!");
 
-                    ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                    out.writeUTF("Connect");
-                    out.writeUTF(server);
-                    Plugin plugin = Bukkit.getPluginManager().getPlugin("BungledSigns");
-                    p.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
+                    bcapi.Connect(p, server);
                 }
             }
         }

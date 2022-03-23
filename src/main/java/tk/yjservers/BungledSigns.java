@@ -2,33 +2,36 @@ package tk.yjservers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.javatuples.Pair;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BungledSigns extends JavaPlugin {
+public class BungledSigns extends JavaPlugin implements Listener {
 
-    public static File dataFile;
-    public static FileConfiguration dataFileConfig;
-    public static Map<Block, String> signslist = new HashMap<>();
+    protected static File dataFile;
+    protected static FileConfiguration dataFileConfig;
+    protected static Map<Block, String> signslist = new HashMap<>();
 
     @Override
     public void onEnable(){
         initData();
         this.getCommand("linksign").setExecutor(new linkSign());
         this.getCommand("unlinksign").setExecutor(new unlinkSign());
+        getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new signInteraction(), this);
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new linkSign());
     }
 
     @Override
@@ -42,8 +45,7 @@ public class BungledSigns extends JavaPlugin {
         getServer().getMessenger().unregisterIncomingPluginChannel(this);
     }
 
-    public void initData() {
-
+    private void initData() {
         //create dataFile
         dataFile = new File(getDataFolder(), "data.yml");
         if (!dataFile.exists()) {
@@ -90,15 +92,15 @@ public class BungledSigns extends JavaPlugin {
     }
 
 
-    public boolean isSign(Block b) {
+    protected boolean isSign(Block b) {
         return b.getType() == Material.SIGN_POST || b.getType() == Material.WALL_SIGN;
     }
 
-    public boolean isLinkedBlock(Block b) {
+    protected boolean isLinkedBlock(Block b) {
         return signslist.containsKey(b);
     }
 
-    public boolean isLinkedSign(Block b) {
+    protected boolean isLinkedSign(Block b) {
         return isLinkedBlock(b) && isSign(b);
     }
 }

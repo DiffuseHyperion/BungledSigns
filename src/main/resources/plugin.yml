@@ -1,5 +1,5 @@
 main: tk.yjservers.BungledSigns
-version: 1.1.0
+version: 1.0.0
 name: BungledSigns
 description: A simple plugin meant for server lobbies using bungeecord. Create signs that warp users to different servers!
 commands:

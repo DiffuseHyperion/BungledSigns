@@ -3,8 +3,8 @@
     <output-path>$PROJECT_DIR$/out/artifacts/BungledSigns_jar</output-path>
     <root id="archive" name="BungledSigns.jar">
       <element id="module-output" name="BungledSigns" />
-      <element id="file-copy" path="$PROJECT_DIR$/src/tk/yjservers/plugin.yml" />
-      <element id="file-copy" path="$PROJECT_DIR$/src/tk/yjservers/data.yml" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/plugin.yml" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/data.yml" />
     </root>
   </artifact>
 </component>

@@ -46,6 +46,7 @@ public class BungledSigns extends JavaPlugin implements Listener {
     }
 
     private void initData() {
+        getLogger().info("test");
         //create dataFile
         dataFile = new File(getDataFolder(), "data.yml");
         if (!dataFile.exists()) {

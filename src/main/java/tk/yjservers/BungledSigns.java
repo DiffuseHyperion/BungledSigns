@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.javatuples.Pair;
+import org.javatuples.Triplet;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +24,10 @@ public class BungledSigns extends JavaPlugin implements Listener {
 
     protected static File dataFile;
     protected static FileConfiguration dataFileConfig;
-    protected static Map<Block, String> signslist = new HashMap<>();
+    // Sign, UUID in data.yml, if sign has updater
+    protected static Map<Block, Pair<String, Boolean>> signslist = new HashMap<>();
+    BungeeMessageAPI bcapi;
+    boolean init;
 
     @Override
     public void onEnable(){
@@ -32,6 +36,18 @@ public class BungledSigns extends JavaPlugin implements Listener {
         this.getCommand("unlinksign").setExecutor(new unlinkSign());
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new signInteraction(), this);
+        init = false;
+    }
+
+    @EventHandler
+    public void onFirstPlrJoin(PlayerJoinEvent e) {
+        if (init) {
+            bcapi = new BungeeMessageAPI(this);
+            for (Block b : signslist.keySet()) {
+                createSignUpdater(b);
+            }
+            init = true;
+        }
     }
 
     @Override
@@ -43,6 +59,26 @@ public class BungledSigns extends JavaPlugin implements Listener {
         }
         getServer().getMessenger().unregisterOutgoingPluginChannel(this);
         getServer().getMessenger().unregisterIncomingPluginChannel(this);
+    }
+
+    protected void createSignUpdater(Block b) {
+        if (isLinkedSign(b) && signslist.containsKey(b)) {
+            if (!signslist.get(b).getValue1()) {
+                BukkitRunnable task = new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        String server = dataFileConfig.getString(signslist.get(b).getValue0() + ".server");
+                        bcapi.PlayerCount(server).whenCompleteAsync((result, error) -> {
+                            getLogger().info(result.getValue0());
+                            Sign sign = (Sign) b;
+                            sign.setLine(0, "count: " + result.getValue1());
+                        });
+                    }
+                };
+                task.runTaskTimer(this, 0, 100);
+                signslist.put(b, new Pair<>(signslist.get(b).getValue0(), true));
+            }
+        }
     }
 
     private void initData() {
@@ -87,7 +123,7 @@ public class BungledSigns extends JavaPlugin implements Listener {
                     getLogger().severe("This sign will appear as unlinked to commands, until this is resolved.");
                     return;
                 }
-                signslist.put(b, s);
+                signslist.put(b, new Pair<>(s, false));
             }
         }
     }

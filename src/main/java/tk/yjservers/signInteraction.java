@@ -33,12 +33,10 @@ public class signInteraction implements Listener {
         if (a == Action.RIGHT_CLICK_BLOCK && bungledSigns.isLinkedSign(clickedblock)) {
             for (Block b : signslist.keySet()) {
                 if (b.equals(clickedblock)) {
-                    Player p = e.getPlayer();
                     String server = dataFileConfig.getString(signslist.get(b) + ".server");
-                    Bukkit.getLogger().info(p.getDisplayName() + " clicked on a linked sign at " + clickedblock.getLocation().toVector().toString() + ", and is being sent to " + server + ".");
-                    p.sendMessage(ChatColor.GREEN+ "Sending you to " + server + "!");
+                    e.getPlayer().sendMessage(ChatColor.GREEN+ "Sending you to " + server + "!");
 
-                    bcapi.Connect(p, server);
+                    bcapi.Connect(e.getPlayer(), dataFileConfig.getString(signslist.get(b) + ".server"));
                 }
             }
         }

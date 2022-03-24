@@ -25,7 +25,7 @@ public class unlinkSign implements CommandExecutor {
             Player p = (Player) commandSender;
             Block b = p.getTargetBlock(null, 5);
             if (bungledSigns.isLinkedSign(b)) {
-                dataFileConfig.set(signslist.get(b), null);
+                dataFileConfig.set(signslist.get(b).getValue0(), null);
                     signslist.remove(b);
                     try {
                         dataFileConfig.save(dataFile);

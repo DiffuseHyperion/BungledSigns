@@ -8,6 +8,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.javatuples.Pair;
+import org.javatuples.Triplet;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,7 +59,8 @@ public class linkSign implements CommandExecutor{
                                 dataFileConfig.set(uuid + ".server", servername);
                                 dataFileConfig.set(uuid + ".world", b.getWorld().getName());
 
-                                signslist.put(b, uuid);
+                                bungledSigns.createSignUpdater(b);
+                                signslist.put(b, new Pair<>(uuid, true));
                                 try {
                                     dataFileConfig.save(dataFile);
                                     p.sendMessage(ChatColor.GREEN + "Sign at " + v.getBlockX() + ", "+ v.getBlockY() + ", "+ v.getBlockZ() + " has been linked to " + servername + "!");

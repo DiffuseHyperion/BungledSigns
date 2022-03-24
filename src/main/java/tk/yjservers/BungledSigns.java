@@ -27,26 +27,16 @@ public class BungledSigns extends JavaPlugin implements Listener {
     // Sign, UUID in data.yml, if sign has updater
     protected static Map<Block, Pair<String, Boolean>> signslist = new HashMap<>();
     BungeeMessageAPI bcapi;
-    boolean init;
 
     @Override
     public void onEnable(){
         initData();
         this.getCommand("linksign").setExecutor(new linkSign());
         this.getCommand("unlinksign").setExecutor(new unlinkSign());
-        getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new signInteraction(), this);
-        init = false;
-    }
-
-    @EventHandler
-    public void onFirstPlrJoin(PlayerJoinEvent e) {
-        if (init) {
-            bcapi = new BungeeMessageAPI(this);
-            for (Block b : signslist.keySet()) {
-                createSignUpdater(b);
-            }
-            init = true;
+        for (Block b : signslist.keySet()) {
+            getLogger().info("creating updater: " + b.getLocation().toVector().toString());
+            createSignUpdater(b);
         }
     }
 
@@ -67,12 +57,14 @@ public class BungledSigns extends JavaPlugin implements Listener {
                 BukkitRunnable task = new BukkitRunnable() {
                     @Override
                     public void run() {
-                        String server = dataFileConfig.getString(signslist.get(b).getValue0() + ".server");
-                        bcapi.PlayerCount(server).whenCompleteAsync((result, error) -> {
-                            getLogger().info(result.getValue0());
-                            Sign sign = (Sign) b;
-                            sign.setLine(0, "count: " + result.getValue1());
-                        });
+                        if (Bukkit.getOnlinePlayers().length > 0) {
+                            String server = dataFileConfig.getString(signslist.get(b).getValue0() + ".server");
+                            bcapi.PlayerCount(server).whenComplete((result, error) -> {
+                                getLogger().info(result.getValue0());
+                                Sign sign = (Sign) b;
+                                sign.setLine(0, "count: " + result.getValue1());
+                            });
+                        }
                     }
                 };
                 task.runTaskTimer(this, 0, 100);
